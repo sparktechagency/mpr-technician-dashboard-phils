@@ -1,0 +1,194 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import "tailwindcss";
+
+@layer components {
+  .text-gradient-color {
+    @apply bg-gradient-to-b from-[#C7003955] to-[#C70039] inline-block text-transparent bg-clip-text;
+  }
+  .bg-gradient-color {
+    @apply bg-gradient-to-tl from-[#C70039] to-[#C7003955];
+  }
+}
+
+@theme default {
+  --color-primary-color: #ffffff;
+  --color-background-color: #030300;
+  --color-secondary-color: #c70039;
+  --color-base-color: #ffffff;
+  --color-anchor-color: #c70039;
+  --color-highlight-color: #eaecfe;
+  --color-lighter-color: #797979;
+  --color-input-color: #efefef;
+  --color-error-color: #e53935;
+  --color-success-color: #16a249;
+  --color-warning-color: #f59f0a;
+  --font-poppins: Poppins, sans-serif;
+}
+
+html,
+body {
+  background-color: #ffffff;
+  color: #ffffff;
+  scroll-behavior: smooth;
+  font-family: "Poppins", sans-serif;
+}
+th {
+  border-bottom: 1px solid #ffffff !important;
+}
+
+/* .font-special {
+  font-family: var(--font-bagatelleVF);
+} */
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #c70039, #c70039);
+  margin-left: 2px;
+  margin-right: 2px;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #202020;
+}
+
+.swiper-pagination-bullet {
+  width: 15px !important;
+  height: 15px !important;
+  background-color: #c70039 !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.active {
+  color: #f9f9f9 !important;
+}
+
+/** ANTD Theme Change  */
+
+/** SIDEBAR: Only added a border to the left of the menu items and changed the background color of the selected item. */
+/* .ant-menu-item {
+  background-color: transparent !important;
+  border-left: 6px solid #C7003900 !important;
+  border-radius: 0px !important;
+  margin: 5px !important;
+}
+.ant-menu-item .ant-menu-item-title {
+  background-color: transparent !important;
+  border-left: 6px solid #C7003900 !important;
+  border-radius: 0px !important;
+  margin: 5px !important;
+}
+.ant-menu-item-selected {
+  background-color: transparent !important;
+  border-left: 6px solid #C70039 !important;
+  border-radius: 0px !important;
+  margin: 5px !important;
+}
+.ant-menu-submenu .ant-menu-submenu-title {
+  background-color: transparent !important;
+  border-left: 6px solid #C7003900 !important;
+  border-radius: 0px !important;
+  margin: 5px !important;
+}
+
+.ant-menu-submenu-selected .ant-menu-submenu-title {
+  background-color: transparent !important;
+  border-left: 6px solid #C70039 !important;
+  border-radius: 0px !important;
+}
+.ant-menu-submenu-selected .ant-menu-item {
+  border-left: 6px solid #C7003900 !important;
+  background-color: transparent !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  margin: 5px !important;
+  margin-bottom: 5px !important;
+  border-radius: 0px !important;
+}
+.ant-menu-submenu-selected .ant-menu-item-selected {
+  border-left: 6px solid #C7003900 !important;
+  background-color: transparent !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  margin: 5px !important;
+  margin-bottom: 5px !important;
+}
+.ant-menu-submenu-selected .ant-menu-item-selected a {
+  color: #C70039 !important;
+}
+.ant-menu-submenu-selected .ant-menu-item-selected .ant-menu-item-icon {
+  color: #C70039 !important;
+} */
+
+/** SIDEBAR:  Selected Backgorund Color Change  */
+
+.ant-menu-submenu-selected .ant-menu-submenu-title {
+  background-color: #c70039 !important;
+}
+.ant-menu-submenu-selected .ant-menu-item-selected {
+  background-color: transparent !important;
+}
+.ant-menu-submenu-selected .ant-menu-item-selected a {
+  color: #c70039 !important;
+}
+.ant-menu-submenu-selected .ant-menu-item-selected .ant-menu-item-icon {
+  color: #c70039 !important;
+}
+
+/** Table:  Sorter Icon Color Change  */
+.ant-table-column-sorters .ant-table-column-sorter-inner {
+  color: #ffffff !important;
+}
+.ant-table-column-sorters .ant-table-column-sorter-inner .active {
+  color: #c70039 !important;
+}
+.ant-table-filter-column .active {
+  color: #c70039 !important;
+}
+.custom-select .ant-select-selection-item {
+  color: #f9f9f9 !important;
+}
+.ant-menu-sub {
+  background-color: #20202000 !important;
+}
+
+.ant-pagination-item-container .ant-pagination-item-ellipsis:hover {
+  color: #c70039 !important;
+}
+
+.recharts-tooltip-wrapper {
+}
+
+.ant-modal {
+  background-image: url("/images/background.png") !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  border-radius: 10px !important;
+  position: relative !important;
+}
+
+.ant-modal-close {
+  color: #f9f9f9 !important;
+  position: absolute !important;
+  top: 0px !important;
+  right: 0px !important;
+  font-size: 20px !important;
+  background-color: #c70039 !important;
+  border-end-start-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.ant-upload-list-item-name {
+  color: #f9f9f9 !important;
+}
