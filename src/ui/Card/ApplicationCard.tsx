@@ -62,7 +62,7 @@ const ApplicationCard = ({
         ) : activeTab === "inProgress" ? (
           <FaEye
             className="size-7 text-base-color cursor-pointer"
-            onClick={() => router(`/application/${data?.id}`)}
+            onClick={() => router(`/admin/application/${data?.id}`)}
           />
         ) : (
           activeTab === "complete" && (

@@ -45,7 +45,7 @@ const AdminAllApplication = () => {
     <div className=" min-h-[90vh]">
       <div className="flex justify-between items-center  py-2 mb-5">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-color font-integralcf capitalize">
-          Manage Prices
+          All Application
         </h1>
         <div className="h-fit">
           <ReuseSearchInput
