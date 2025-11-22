@@ -2,6 +2,9 @@ import { BarsOutlined } from "@ant-design/icons";
 // import { Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import { AllImages } from "../../../public/images/AllImages";
+import { useGetProfileQuery } from "../../redux/features/profile/profileApi";
+import { getImageUrl } from "../../helpers/config/envConfig";
+import { ITechnicianProfile } from "../../types";
 // import { FaBell, FaRegBell } from "react-icons/fa6";
 
 // const notifications = [
@@ -39,6 +42,11 @@ const Topbar = ({
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const imageApiUrl = getImageUrl();
+
+  const { data, isFetching } = useGetProfileQuery({});
+  const profileData: ITechnicianProfile = data?.data;
+
   // const user = JSON.parse(localStorage.getItem("user_data") || "null");
 
   // const handleMenuClick = () => {
@@ -89,19 +97,30 @@ const Topbar = ({
         >
           <FaBell className="text-2xl text-secondary-color" />
         </Dropdown> */}
-        <Link to="profile">
-          <div className="flex items-center gap-2">
-            <img
-              src={AllImages.profile}
-              alt="profile_pic"
-              style={{ width: "40px", height: "40px" }}
-              className="rounded-full border border-secondary-color"
-            />
-            <p className="text-sm sm:text-base lg:text-lg font-medium text-base-color">
-              John Doe
-            </p>
+        {isFetching ? (
+          <div className="flex items-center gap-1">
+            <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
+            <p className="w-32 h-6 rounded-full bg-gray-300 animate-pulse"></p>
           </div>
-        </Link>
+        ) : (
+          <Link to="profile">
+            <div className="flex items-center gap-2">
+              <img
+                src={
+                  profileData?.profileImage
+                    ? imageApiUrl + profileData?.profileImage
+                    : AllImages.profile
+                }
+                alt="profile_pic"
+                style={{ width: "40px", height: "40px" }}
+                className="rounded-full border border-secondary-color object-cover"
+              />
+              <p className="text-sm sm:text-base lg:text-lg font-medium text-base-color">
+                {profileData?.name || ""}
+              </p>
+            </div>
+          </Link>
+        )}
       </div>
     </div>
   );

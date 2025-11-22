@@ -94,7 +94,7 @@ export const mainTheme = {
     },
     Input: {
       colorTextPlaceholder: "##D0D5DD99 ",
-      colorIcon: "#202020",
+      colorIcon: "#ffffff",
     },
     Radio: {
       colorPrimary: "#6A0DAD",

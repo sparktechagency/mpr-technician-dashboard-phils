@@ -10,9 +10,8 @@ import {
   useForgetOtpVerifyMutation,
   useResendForgetOTPMutation,
 } from "../../redux/features/auth/authApi";
-import Cookies from "js-cookie";
 
-const OTPVerify = () => {
+const SignupOtpVerify = () => {
   const [form] = Form.useForm();
   const router = useNavigate();
   const [otp, setOtp] = useState("");
@@ -28,14 +27,8 @@ const OTPVerify = () => {
         "Verifying..."
       );
       if (res?.statusCode === 200) {
-        Cookies.remove("mpr_forgetToken");
-        Cookies.set("mpr_forgetOtpMatchToken", res.data.forgetOtpMatchToken, {
-          path: "/",
-          expires: 1,
-        });
-
         setOtp("");
-        router("/update-password");
+        router("/sign-in");
       }
     }
   };
@@ -45,12 +38,13 @@ const OTPVerify = () => {
       resendOtp,
       {
         body: {
-          purpose: "forget-password", // "reset-password" | "forget-password"
+          purpose: "email-verification", // "reset-password" | "forget-password"
         },
       },
       "Sending OTP..."
     );
   };
+
   return (
     <div className="text-base-color flex flex-col items-center justify-center min-h-screen  gap-5">
       <Container className="z-10">
@@ -61,8 +55,8 @@ const OTPVerify = () => {
                 Verify OTP
               </h1>
               <p className="text-xl lg:text-2xl font-medium mb-2 text-base-color/90">
-                Please check your email. We have sent a code to contact{" "}
-                abc@gmail.com
+                Please check your email. We have sent a code to contact on your
+                email
                 {/* {forgottenEmail} */}
               </p>
             </div>
@@ -80,7 +74,7 @@ const OTPVerify = () => {
                       rounded-lg mr-[10px] sm:mr-[20px] !text-base-color "
                     value={otp}
                     onChange={setOtp}
-                    numInputs={6}
+                    numInputs={4}
                     renderInput={(props) => <input {...props} required />}
                   />
                 </div>
@@ -110,4 +104,4 @@ const OTPVerify = () => {
     </div>
   );
 };
-export default OTPVerify;
+export default SignupOtpVerify;

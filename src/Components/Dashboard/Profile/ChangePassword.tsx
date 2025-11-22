@@ -1,12 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, Typography } from "antd";
 import ReuseButton from "../../../ui/Button/ReuseButton";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import { useChangePasswordMutation } from "../../../redux/features/auth/authApi";
+import Cookies from "js-cookie";
 
 const ChangePassword = () => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
-    localStorage.removeItem("user_data");
-    window.location.reload();
+  const [form] = Form.useForm();
+
+  const [updatePassword] = useChangePasswordMutation();
+  const onFinish = async (values: any) => {
+    const data = {
+      oldPassword: values.currentPassword,
+      newPassword: values.reEnterPassword,
+    };
+
+    const res = await tryCatchWrapper(
+      updatePassword,
+      { body: data },
+      "Changing Password..."
+    );
+    if (res?.statusCode === 200) {
+      form.resetFields();
+      Cookies.remove("mrt_tech_accessToken");
+
+      window.location.href = "/sign-in";
+      window.location.reload();
+    }
   };
   return (
     <div className="">
@@ -15,6 +35,7 @@ const ChangePassword = () => {
       </h1>
       <div className="w-[70%] mx-auto">
         <Form
+          form={form}
           onFinish={onFinish}
           layout="vertical"
           className="bg-transparent w-full"

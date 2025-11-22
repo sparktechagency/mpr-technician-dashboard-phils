@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import useUserData from "../hooks/useUserData";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -6,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 function ProtectedRoute({ children, role }: ProtectedRouteProps) {
-  const user = JSON.parse(localStorage.getItem("user_data") || "null");
+  const user = useUserData();
 
   if (!user || user.role !== role) {
     return <Navigate to="/sign-in" replace />;

@@ -1,10 +1,24 @@
 import { useState } from "react";
 import YearOption from "../../../utils/YearOption";
 import Line_Chart from "../../Chart/LineChart";
+import { useGetEarningsOverviewQuery } from "../../../redux/features/overview/overviewApi";
+import { FadeLoader } from "react-spinners";
 
 const IncomeOverview = () => {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
+
+  const { data, isFetching } = useGetEarningsOverviewQuery({ year });
+
+  const earningsData = data?.data;
+
+  if (isFetching) {
+    return (
+      <div className="flex justify-center items-center w-full h-full min-h-40">
+        <FadeLoader color="#fff" />
+      </div>
+    );
+  }
 
   console.log(year);
   return (
@@ -17,13 +31,13 @@ const IncomeOverview = () => {
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 rounded-full bg-secondary-color"></div>
             <p className="text-sm sm:text-base lg:text-lg text-secondary-color font-semibold">
-              Pending{" "}
+              In progress{" "}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 rounded-full bg-primary-color"></div>
             <p className="text-sm sm:text-base lg:text-lg text-primary-color font-semibold">
-              Complete{" "}
+              Completed{" "}
             </p>
           </div>
         </div>
@@ -38,7 +52,7 @@ const IncomeOverview = () => {
         Overall Service
       </p>
       <div>
-        <Line_Chart />
+        <Line_Chart earningsData={earningsData} />
       </div>
     </div>
   );

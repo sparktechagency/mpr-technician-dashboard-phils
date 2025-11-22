@@ -1,20 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, Typography, Upload } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { IoCameraOutline } from "react-icons/io5";
 import { AllImages } from "../../../../public/images/AllImages";
 import ReuseButton from "../../../ui/Button/ReuseButton";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import { getImageUrl } from "../../../helpers/config/envConfig";
+import Loading from "../../../ui/Loading";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+} from "../../../redux/features/profile/profileApi";
 
 const EditProfile = () => {
-  const profileData = {
-    fullname: "James Mitchell",
-    email: "emily@gmail.com",
-    address: "Vancouver, BC VG1Z4, Canada",
-    contactNumber: "+99-01846875456",
-  };
+  const [form] = Form.useForm();
+  const imageApiUrl = getImageUrl();
+  const { data, isFetching } = useGetProfileQuery({});
+  console.log(data);
+  const [updateProfile] = useUpdateProfileMutation({});
 
-  const [imageUrl, setImageUrl] = useState(AllImages.profile);
+  const profileData = data?.data;
+
+  const profileImage =
+    profileData?.profileImage?.length > 0
+      ? imageApiUrl + profileData?.profileImage
+      : AllImages.profile;
+
+  const [imageUrl, setImageUrl] = useState(profileImage);
+
+  useEffect(() => {
+    setImageUrl(profileImage);
+    form.setFieldsValue({
+      email: profileData?.email,
+      name: profileData?.name,
+      phone: profileData?.phone,
+      yearOfExperience: profileData?.yearOfExperience,
+      specialties: profileData?.specialties,
+    });
+  }, [
+    form,
+    profileData?.email,
+    profileData?.name,
+    profileData?.phone,
+    profileData?.specialties,
+    profileData?.yearOfExperience,
+    profileImage,
+  ]);
 
   const handleImageUpload = (info: any) => {
     if (info.file.status === "removed") {
@@ -29,10 +61,32 @@ const EditProfile = () => {
     }
   };
 
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
-    console.log(imageUrl);
+  const onFinish = async (values: any) => {
+    const formData = new FormData();
+    if (values?.image?.file?.originFileObj) {
+      formData.append("image", values?.image?.file?.originFileObj);
+    }
+    const data = {
+      name: values?.name,
+      phone: values?.phone,
+      yearOfExperience: values?.yearOfExperience,
+      specialties: values?.specialties,
+    };
+    formData.append("data", JSON.stringify(data));
+    await tryCatchWrapper(
+      updateProfile,
+      { body: formData },
+      "Updating Profile..."
+    );
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center min-h-[90vh]">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="">
@@ -41,6 +95,7 @@ const EditProfile = () => {
       </h1>
       <div className=" lg:w-[70%] mx-auto">
         <Form
+          form={form}
           onFinish={onFinish}
           layout="vertical"
           className="bg-transparent py-10 text-base-color w-full "
@@ -61,7 +116,17 @@ const EditProfile = () => {
                       }
                     }, 1000);
                   }}
-                  onChange={handleImageUpload}
+                  onChange={(info) => {
+                    handleImageUpload(info);
+                    console.log(info);
+                    // Restrict file list to the first 10 images
+                    if (info.fileList[0]?.name?.length > 10) {
+                      info.fileList[0].name = info.fileList[0].name.slice(
+                        0,
+                        10
+                      );
+                    }
+                  }}
                   maxCount={1}
                   accept="image/*"
                   listType="text"
@@ -90,12 +155,9 @@ const EditProfile = () => {
             <Typography.Title level={5} style={{ color: "#fff" }}>
               Email
             </Typography.Title>
-            <Form.Item
-              initialValue={profileData.email}
-              name="email"
-              className="text-white "
-            >
+            <Form.Item name="email" className="text-white ">
               <Input
+                disabled
                 suffix={<MdOutlineEdit />}
                 type="email"
                 placeholder="Enter your email"
@@ -103,13 +165,9 @@ const EditProfile = () => {
               />
             </Form.Item>
             <Typography.Title level={5} style={{ color: "#fff" }}>
-              User Name
+              Full Name
             </Typography.Title>
-            <Form.Item
-              initialValue={profileData.fullname}
-              name="userName"
-              className="text-white"
-            >
+            <Form.Item name="name" className="text-white">
               <Input
                 suffix={<MdOutlineEdit />}
                 placeholder="Enter your Name"
@@ -117,16 +175,34 @@ const EditProfile = () => {
               />
             </Form.Item>
             <Typography.Title level={5} style={{ color: "#fff" }}>
-              Contact number
+              Phone number
             </Typography.Title>
-            <Form.Item
-              initialValue={profileData.contactNumber}
-              name="contactNumber"
-              className="text-white"
-            >
+            <Form.Item name="phone" className="text-white">
               <Input
+                type="number"
                 suffix={<MdOutlineEdit />}
                 placeholder="Enter your Contact number"
+                className="!py-2.5 px-3 text-xl !text-base-color !bg-transparent !border !border-base-color"
+              />
+            </Form.Item>
+            <Typography.Title level={5} style={{ color: "#fff" }}>
+              Year of Experience
+            </Typography.Title>
+            <Form.Item name="yearOfExperience" className="text-white">
+              <Input
+                type="number"
+                suffix={<MdOutlineEdit />}
+                placeholder="Enter your Experience"
+                className="!py-2.5 px-3 text-xl !text-base-color !bg-transparent !border !border-base-color"
+              />
+            </Form.Item>
+            <Typography.Title level={5} style={{ color: "#fff" }}>
+              Specialties
+            </Typography.Title>
+            <Form.Item name="specialties" className="text-white">
+              <Input.TextArea
+                rows={4}
+                placeholder="Enter your Specialties"
                 className="!py-2.5 px-3 text-xl !text-base-color !bg-transparent !border !border-base-color"
               />
             </Form.Item>

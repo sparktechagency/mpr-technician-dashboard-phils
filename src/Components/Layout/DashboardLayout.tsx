@@ -1,10 +1,4 @@
-import {
-  Link,
-  NavLink,
-  Outlet,
-  ScrollRestoration,
-  useLocation,
-} from "react-router-dom";
+import { Link, Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import { Layout, Menu, Typography } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import { useState } from "react";
@@ -18,9 +12,11 @@ import { AllImages } from "../../../public/images/AllImages";
 import { commonPaths } from "../../Routes/common.route";
 import { BarsOutlined } from "@ant-design/icons";
 import Container from "../../ui/Container";
+import useUserData from "../../hooks/useUserData";
+import Cookies from "js-cookie";
 
 const DashboardLayout = () => {
-  const userRole = JSON.parse(localStorage.getItem("user_data") || "null");
+  const userRole = useUserData();
   const location = useLocation();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -37,7 +33,7 @@ const DashboardLayout = () => {
     }
   };
 
-  const defaultUrl = userRole?.role === "admin" ? "/admin" : "/";
+  const defaultUrl = userRole?.role === "technician" ? "/technician" : "/";
   const normalizedPath = location.pathname.replace(defaultUrl, "");
 
   const [collapsed, setCollapsed] = useState(true);
@@ -62,12 +58,21 @@ const DashboardLayout = () => {
 
   const activeKeys = getActiveKeys(normalizedPath);
   const menuItems =
-    userRole?.role === "admin"
+    userRole?.role === "technician"
       ? //   ? sidebarItemsGenerator(adminPaths, "admin")
         sidebarItemsGenerator(adminPaths, userRole?.role)
       : [];
 
-  const otherItem = sidebarItemsGenerator(commonPaths, userRole?.role);
+  const otherItem = sidebarItemsGenerator(
+    commonPaths,
+    userRole?.role as string
+  );
+
+  const handleLogout = () => {
+    Cookies.remove("mrt_tech_accessToken");
+    window.location.href = "/sign-in";
+    window.location.reload();
+  };
 
   otherItem.push({
     key: "logout",
@@ -81,8 +86,8 @@ const DashboardLayout = () => {
       />
     ),
     label: (
-      <div onClick={() => localStorage.removeItem("user_data")}>
-        <NavLink to="/sign-in">Logout</NavLink>
+      <div onClick={() => handleLogout()}>
+        <span className="text-base-color cursor-pointer">Logout</span>
       </div>
     ),
   });

@@ -1,21 +1,86 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import ReuseButton from "../../ui/Button/ReuseButton";
-import CancleModal from "../../ui/Modal/CancleModal";
+import {
+  useAcceptOrderMutation,
+  useCompleteOrderMutation,
+  useGetSingleOrderQuery,
+} from "../../redux/features/order/orderApi";
+import { Link, useParams } from "react-router-dom";
+import { IServiceRequest } from "../../types";
+import { formatDate } from "../../utils/dateFormet";
+import MapComponent from "../../ui/MapComponent";
+import ApproveModal from "../../ui/Modal/ApproveModal";
+import { FadeLoader } from "react-spinners";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import useUserData from "../../hooks/useUserData";
 
 const AdminApplicationDetailsPage = () => {
-  const [isCancleModalVisible, setIsCancleModalVisible] = useState(false);
+  const [completeOrder] = useCompleteOrderMutation();
+
+  const { id } = useParams<{ id: string }>();
+  const user = useUserData();
+  const { data, isFetching, refetch } = useGetSingleOrderQuery(
+    {
+      orderId: id || "",
+    },
+    { refetchOnMountOrArgChange: true }
+  );
+  const [acceptOrder] = useAcceptOrderMutation();
+
+  const serviceData: IServiceRequest = data?.data;
+  const [isAcceptModalVisible, setIsAcceptModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<any | null>(null);
 
-  const showCancleModal = (record: any) => {
+  const showAcceptModal = (record: any) => {
     setCurrentRecord(record);
-    setIsCancleModalVisible(true);
+    setIsAcceptModalVisible(true);
   };
 
   const handleCancel = () => {
-    setIsCancleModalVisible(false);
+    setIsAcceptModalVisible(false);
     setCurrentRecord(null);
   };
+  const handleApprove = async (data: IServiceRequest) => {
+    const res = await tryCatchWrapper(
+      acceptOrder,
+      { params: data?._id },
+      "Accepting Request..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+      refetch();
+    }
+  };
+
+  const handleComplete = async (data: IServiceRequest) => {
+    const res = await tryCatchWrapper(
+      completeOrder,
+      { params: data?._id },
+      "Completing Request..."
+    );
+
+    if (res.statusCode === 200) {
+      handleCancel();
+      refetch();
+    }
+  };
+
+  if (isFetching) {
+    return (
+      <div className="flex justify-center items-center w-full h-full min-h-40">
+        <FadeLoader color="#fff" />
+      </div>
+    );
+  }
+
+  if (
+    serviceData?.status === "inprogress" &&
+    serviceData?.serviceProviderId !== user?.userId
+  ) {
+    return <div>Service not found</div>;
+  }
+
   return (
     <div className=" min-h-[90vh] border border-primary-color rounded-lg p-5">
       <div className="flex justify-between items-center">
@@ -23,8 +88,22 @@ const AdminApplicationDetailsPage = () => {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-color font-integralcf capitalize">
             Details
           </h1>
-          <p className="text-sm sm:text-base lg:text-lg bg-warning-color/40 text-base-color px-2 py-0.5 rounded-full font-bold">
-            Pending
+          <p
+            className={`text-sm sm:text-base lg:text-lg 0 text-base-color px-2 py-0.5 rounded-full font-bold ${
+              serviceData?.status === "pending"
+                ? "bg-warning-color/50 text-base-color"
+                : serviceData?.status === "completed"
+                ? "bg-success-color text-primary-color"
+                : "bg-[#6226EF]/50 text-base-color"
+            }`}
+          >
+            {serviceData?.status === "pending"
+              ? "Pending"
+              : serviceData?.status === "completed"
+              ? "Completed"
+              : serviceData?.status === "inprogress"
+              ? "In Progress"
+              : ""}
           </p>
         </div>
       </div>
@@ -39,19 +118,19 @@ const AdminApplicationDetailsPage = () => {
           <div className="p-5 text-base-color rounded-lg border border-primary-color text-sm sm:text-base lg:text-lg">
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Name: </span>
-              <span>{currentRecord?.name || "abc"}</span>
+              <span>{serviceData?.clientName}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Phone: </span>
-              <span>{currentRecord?.email || "55575757"}</span>
+              <span>{serviceData?.phoneNumber}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Email: </span>
-              <span>{currentRecord?.email || "abc572@example.com"}</span>
+              <span>{serviceData?.email}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Address: </span>
-              <span>{currentRecord?.address || "Street, City, Country"}</span>
+              <span>{serviceData?.serviceAddress}</span>
             </div>
           </div>
         </div>
@@ -65,19 +144,19 @@ const AdminApplicationDetailsPage = () => {
           <div className="p-5 text-base-color rounded-lg border border-primary-color text-sm sm:text-base lg:text-lg">
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Brand: </span>
-              <span>{currentRecord?.brand || "Apple"}</span>
+              <span>{serviceData?.brand}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Product Line: </span>
-              <span>{currentRecord?.product_line || "Apple"}</span>
+              <span>{serviceData?.productline}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Model: </span>
-              <span>{currentRecord?.model || "iPhone 12"}</span>
+              <span>{serviceData?.model}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Variant: </span>
-              <span>{currentRecord?.experience || "Standard"}</span>
+              <span>{serviceData?.variant}</span>
             </div>
           </div>
         </div>
@@ -94,14 +173,11 @@ const AdminApplicationDetailsPage = () => {
           <div className="p-5 text-base-color rounded-lg border border-primary-color text-sm sm:text-base lg:text-lg">
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Issue Type: </span>
-              <span>{currentRecord?.issue_type || "Screen Damage"}</span>
+              <span>{serviceData?.issueType}</span>
             </div>
             <div className="flex items-start justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
               <span className="font-medium">Description: </span>
-              <span>
-                {currentRecord?.description ||
-                  "ooooooooooooooooooooooooghxdfzg  vZEFvc bhvXADFZzxhy jn fuybj njthxdfzxch trvb xrzt"}
-              </span>
+              <span>{serviceData?.issueDescription}</span>
             </div>
           </div>
         </div>
@@ -114,47 +190,79 @@ const AdminApplicationDetailsPage = () => {
           </div>
           <div className="p-5 text-base-color rounded-lg border border-primary-color text-sm sm:text-base lg:text-lg">
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
-              <span className="font-medium">Set date: </span>
-              <span>{currentRecord?.set_date || "20-01-2023"}</span>
+              <span className="font-medium">Prefered date: </span>
+              <span>{formatDate(serviceData?.preferedDate)}</span>
             </div>
             <div className="flex items-center justify-between border-b border-input-color/20 py-1  gap-2 mb-2">
-              <span className="font-medium">Set time: </span>
-              <span>{currentRecord?.set_time || "09:00 AM"}</span>
+              <span className="font-medium">Prefered time: </span>
+              <span>{serviceData?.preferedTime}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="mt-16">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29208.80556098383!2d90.4036352!3d23.77942835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c712a2fdeb4d%3A0xb2c1d7fcd3ef3458!2sBanani%20Club!5e0!3m2!1sen!2sbd!4v1761543692988!5m2!1sen!2sbd"
-          width="100%"
-          height="600"
-          loading="lazy"
-        ></iframe>
+        <MapComponent
+          lat={serviceData?.location?.latitude || 0}
+          lng={serviceData?.location?.longitude || 0}
+          height={"500px"}
+        />
       </div>
 
-      <div className="flex items-center justify-center gap-5 my-10">
-        <ReuseButton
-          variant="outline"
-          className="!px-6 !py-5 w-fit flex items-center justify-center gap-2"
-          onClick={() => showCancleModal(currentRecord)}
-        >
-          Cancel Order
-        </ReuseButton>
-        <ReuseButton
-          variant="secondary"
-          className="!px-6 !py-5 w-fit flex items-center justify-center gap-2"
-          onClick={() => showCancleModal(currentRecord)}
-        >
-          Accept
-        </ReuseButton>
-      </div>
-      <CancleModal
-        isCancleModalVisible={isCancleModalVisible}
+      {serviceData?.status === "pending" && (
+        <div className="flex items-center justify-center gap-5 my-10">
+          <ReuseButton
+            variant="secondary"
+            className="!px-6 !py-5 w-fit flex items-center justify-center gap-2"
+            onClick={() => showAcceptModal(serviceData)}
+          >
+            Accept
+          </ReuseButton>
+        </div>
+      )}
+      {serviceData?.status === "inprogress" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 px-4 text-lg mt-16">
+          <div className=" p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent text-secondary-color border border-secondary-color">
+            En route
+          </div>
+          <Link
+            to={`tel:${serviceData?.phoneNumber}`}
+            className=" p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent !text-secondary-color border border-secondary-color"
+          >
+            Call
+          </Link>
+          <Link
+            to={`https://www.google.com/maps/dir/?api=1&destination=${serviceData?.location?.latitude},${serviceData?.location?.longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent !text-secondary-color border border-secondary-color"
+          >
+            Navigate
+          </Link>
+          <div
+            onClick={() => showAcceptModal(serviceData)}
+            className=" p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-success-color/50 !text-white cursor-pointer"
+          >
+            Complete
+          </div>
+        </div>
+      )}
+      <ApproveModal
+        isApproveModalVisible={isAcceptModalVisible}
         handleCancel={handleCancel}
+        description={
+          serviceData?.status === "inprogress"
+            ? "Are You Sure You want to Complete This Order?"
+            : "Are You Sure You want to Accept This Request?"
+        }
         currentRecord={currentRecord}
-        handleCancleReq={() => {}}
+        handleApprove={() => {
+          if (serviceData?.status === "inprogress") {
+            handleComplete(serviceData);
+          } else {
+            handleApprove(serviceData);
+          }
+        }}
       />
     </div>
   );

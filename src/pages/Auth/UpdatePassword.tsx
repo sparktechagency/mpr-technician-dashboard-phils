@@ -7,6 +7,9 @@ import ReuseInput from "../../ui/Form/ReuseInput";
 import ReuseButton from "../../ui/Button/ReuseButton";
 import { IoMdUnlock } from "react-icons/io";
 import { Form, FormInstance } from "antd";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import { useResetPasswordMutation } from "../../redux/features/auth/authApi";
+import Cookies from "js-cookie";
 
 const inputStructure = [
   {
@@ -48,9 +51,24 @@ const inputStructure = [
 const UpdatePassword = () => {
   const [form] = Form.useForm();
   const router = useNavigate();
-  const onFinish = (values: any) => {
-    console.log("Received values of update form:", values);
-    router("/sign-in");
+  const [resetPassword] = useResetPasswordMutation();
+
+  const onFinish = async (values: any) => {
+    const data = {
+      newPassword: values.password,
+      confirmPassword: values.confirmPassword,
+    };
+
+    const res = await tryCatchWrapper(
+      resetPassword,
+      { body: data },
+      "Changing Password..."
+    );
+    if (res?.statusCode === 200) {
+      form.resetFields();
+      Cookies.remove("mpr_forgetOtpMatchToken");
+      router("/sign-in");
+    }
   };
 
   return (

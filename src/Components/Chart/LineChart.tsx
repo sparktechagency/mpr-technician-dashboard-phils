@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import {
   LineChart,
@@ -9,36 +10,37 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
 } from "recharts";
-
-// Define the structure of each data point in the chart
-interface ChartData {
-  name: string;
-  complete: number;
-  pending: number;
-}
-
-const data: ChartData[] = [
-  { name: "Jan", complete: 80, pending: 30 },
-  { name: "Feb", complete: 70, pending: 20 },
-  { name: "Mar", complete: 50, pending: 15 },
-  { name: "Apr", complete: 60, pending: 18 },
-  { name: "May", complete: 30, pending: 8 },
-  { name: "Jun", complete: 20, pending: 5 },
-  { name: "Jul", complete: 45, pending: 15 },
-  { name: "Aug", complete: 36, pending: 20 },
-  { name: "Sep", complete: 53, pending: 25 },
-  { name: "Oct", complete: 69, pending: 35 },
-  { name: "Nov", complete: 78, pending: 40 },
-  { name: "Dec", complete: 36, pending: 15 },
-];
+import { IMonthlyStats } from "../../types";
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: { payload: ChartData; complete: number; pending: number }[];
+  payload?: any[];
 }
 
-const Line_Chart: React.FC = () => {
-  // Custom tooltip to display the information
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const Line_Chart = ({ earningsData }: { earningsData: IMonthlyStats[] }) => {
+  // Convert API → Chart Format
+  const chartData = earningsData.map((item) => ({
+    name: monthNames[item.month - 1], // convert month number
+    completed: item.completed,
+    inprogress: item.inprogress,
+  }));
+
+  // Custom Tooltip
   const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -47,12 +49,16 @@ const Line_Chart: React.FC = () => {
             {payload[0].payload.name}
           </p>
           <p className="text-xs text-base-color">
-            Complete:{" "}
-            <span className="font-semibold">{payload[0].payload.complete}</span>
+            Completed:{" "}
+            <span className="font-semibold">
+              {payload[0].payload.completed}
+            </span>
           </p>
           <p className="text-xs text-base-color">
-            Pending:{" "}
-            <span className="font-semibold">{payload[0].payload.pending}</span>
+            In Progress:{" "}
+            <span className="font-semibold">
+              {payload[0].payload.inprogress}
+            </span>
           </p>
         </div>
       );
@@ -60,43 +66,44 @@ const Line_Chart: React.FC = () => {
     return null;
   };
 
-  // Custom tick style for X and Y axes
   const tickStyle = { fill: "#fff", fontSize: 12 };
 
   return (
     <div className="w-full h-[500px]">
       <ResponsiveContainer>
         <LineChart
-          data={data}
+          data={chartData}
           margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
         >
           <RechartsTooltip content={<CustomTooltip />} />
-          <XAxis dataKey="name" tick={{ ...tickStyle }} tickMargin={6} />
-          <YAxis tick={{ ...tickStyle }} tickMargin={16} />
-          {/* <CartesianGrid strokeDasharray="3 3" stroke="#E5E5EF" /> */}
+          <XAxis dataKey="name" tick={tickStyle} />
+          <YAxis tick={tickStyle} />
+
           <Legend />
-          {/* Reference lines to show certain value thresholds */}
-          <ReferenceLine y={10} stroke="#E5E5EF" />
-          <ReferenceLine y={20} stroke="#E5E5EF" />
-          <ReferenceLine y={30} stroke="#E5E5EF" />
-          <ReferenceLine y={40} stroke="#E5E5EF" />
-          <ReferenceLine y={50} stroke="#E5E5EF" />
-          <ReferenceLine y={60} stroke="#E5E5EF" />
-          {/* Line for Complete */}
+
+          {/* Reference lines */}
+          {[10, 20, 30, 40, 50, 60].map((v) => (
+            <ReferenceLine key={v} y={v} stroke="#E5E5EF" />
+          ))}
+
+          {/* Completed Line */}
           <Line
             type="monotone"
-            dataKey="complete"
-            stroke="#2D9CDB" // Blue color for Complete
+            dataKey="completed"
+            stroke="#2D9CDB"
             strokeWidth={3}
-            dot={false} // Disable the dots on the line
+            dot={false}
+            name="Completed"
           />
-          {/* Line for Pending */}
+
+          {/* In Progress Line */}
           <Line
             type="monotone"
-            dataKey="pending"
-            stroke="#C70039" // Orange color for Pending
+            dataKey="inprogress"
+            stroke="#C70039"
             strokeWidth={3}
-            dot={false} // Disable the dots on the line
+            dot={false}
+            name="In Progress"
           />
         </LineChart>
       </ResponsiveContainer>

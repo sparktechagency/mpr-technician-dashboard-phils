@@ -19,32 +19,30 @@ import UpdatePassword from "../pages/Auth/UpdatePassword";
 import NotFound from "../ui/NotFound/NotFound";
 import DashboardLayout from "../Components/Layout/DashboardLayout";
 import { commonPaths } from "./common.route";
-
-interface User {
-  email: string;
-  password: string;
-  role: string;
-}
+import useUserData from "../hooks/useUserData";
+import SignUp from "../pages/Auth/SignUp";
+import SignupOtpVerify from "../pages/Auth/SignUpOtp";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function AuthRedirect() {
+  const user = useUserData();
   const navigate = useNavigate();
 
+  console.log("user", user);
+
   useEffect(() => {
-    const user = JSON.parse(
-      localStorage.getItem("user_data") || "null"
-    ) as User | null;
-    if (user && user.role) {
-      navigate(`/${user.role}/dashboard`, { replace: true });
+    if (user && user.role === "technician") {
+      navigate(`/${user.role}/dashboard`, {
+        replace: true,
+      });
     } else {
       navigate("/sign-in", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   // Optionally display a loading indicator
   return <Loading />;
 }
-
 // Define routes with TypeScript types
 const router: RouteObject[] = [
   {
@@ -58,27 +56,35 @@ const router: RouteObject[] = [
     element: <AuthRedirect />,
   },
   {
-    path: "/admin",
+    path: "/technician",
     index: true, // This applies to the exact path "/"
     element: <AuthRedirect />,
   },
   {
-    path: "admin",
+    path: "technician",
     element: (
-      <ProtectedRoute role="admin">
+      <ProtectedRoute role="technician">
         <DashboardLayout />
       </ProtectedRoute>
     ),
     children: routeGenerator(adminPaths), // Generating child routes dynamically
   },
   {
-    path: "admin",
+    path: "technician",
     element: (
-      <ProtectedRoute role="admin">
+      <ProtectedRoute role="technician">
         <DashboardLayout />
       </ProtectedRoute>
     ),
     children: routeGenerator(commonPaths), // Generating child routes dynamically
+  },
+  {
+    path: "sign-up",
+    element: <SignUp />,
+  },
+  {
+    path: "sign-up/verify",
+    element: <SignupOtpVerify />,
   },
   {
     path: "sign-in",

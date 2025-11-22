@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { tagTypesList } from "../tagTypes";
-import { getFromLocalStorage } from "../../utils/localStorage";
 import Cookies from "js-cookie";
 import { getBaseUrl } from "../../helpers/config/envConfig";
 
@@ -8,21 +7,21 @@ const baseQuery = fetchBaseQuery({
   baseUrl: getBaseUrl(),
   credentials: "include",
   prepareHeaders: (headers) => {
-    const token = Cookies.get("pianofesta_accessToken");
-    const signUpToken = getFromLocalStorage("pianofesta_createUserToken");
+    const token = Cookies.get("mrt_tech_accessToken");
+    const signUpToken = Cookies.get("mrt_tech_signUpToken");
 
-    const changePassToken = getFromLocalStorage("pianofesta_otp_match_token");
+    const changePassToken = Cookies.get("mpr_forgetOtpMatchToken");
 
     if (token) {
-      headers.set("authorization", `Bearer ${token}`);
+      headers.set("token", `${token}`);
     }
 
     if (signUpToken) {
-      headers.set("SignUpToken", `signUpToken ${signUpToken}`);
+      headers.set("token", `${signUpToken}`);
     }
 
     if (changePassToken) {
-      headers.set("Forget-password", `Forget-password ${changePassToken}`);
+      headers.set("token", `${changePassToken}`);
     }
 
     return headers;

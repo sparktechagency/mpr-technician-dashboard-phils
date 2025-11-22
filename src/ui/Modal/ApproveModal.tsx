@@ -15,7 +15,7 @@ const ApproveModal: React.FC<ApproveModalProps<any>> = ({
   handleCancel,
   currentRecord,
   handleApprove,
-  description = " Are You Sure You want to Approve    ?",
+  description = " Are You Sure You want to Accept This Request    ?",
 }) => {
   //   const [blockUser] = useBlockUserMutation();
 
@@ -41,7 +41,7 @@ const ApproveModal: React.FC<ApproveModalProps<any>> = ({
         >
           <ReuseButton
             variant="highlight"
-            className="!px-6 !py-5 mr-4 w-fit flex items-center justify-center gap-2"
+            className="!px-6 !py-5 mr-4 w-fit flex items-center justify-center gap-2 !bg-transparent"
             onClick={handleCancel}
           >
             Cancel
@@ -51,7 +51,7 @@ const ApproveModal: React.FC<ApproveModalProps<any>> = ({
             className="!px-6 !py-5 w-fit flex items-center justify-center gap-2 !bg-success-color !border-none"
             onClick={() => handleApprove(currentRecord)}
           >
-            Approve
+            Accept
           </ReuseButton>
         </div>
       }
