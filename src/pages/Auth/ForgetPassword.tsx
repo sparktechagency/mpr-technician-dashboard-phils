@@ -27,13 +27,14 @@ const inputStructure = [
 ];
 
 const ForgotPassword = () => {
+  Cookies.remove("mrt_tech_signUpToken");
   const [form] = Form.useForm();
   const router = useNavigate();
   const userExist = useUserData();
   const [forgetPassword] = useForgetPasswordMutation();
 
   useEffect(() => {
-    if (userExist?.role === "admin") {
+    if (userExist?.role === "technician") {
       router("/", { replace: true });
     }
   }, [router, userExist]);

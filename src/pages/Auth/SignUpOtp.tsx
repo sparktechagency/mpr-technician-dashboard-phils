@@ -7,8 +7,8 @@ import Container from "../../ui/Container";
 import ReuseButton from "../../ui/Button/ReuseButton";
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
 import {
-  useForgetOtpVerifyMutation,
   useResendForgetOTPMutation,
+  useSignUpOtpVerifyMutation,
 } from "../../redux/features/auth/authApi";
 
 const SignupOtpVerify = () => {
@@ -16,7 +16,7 @@ const SignupOtpVerify = () => {
   const router = useNavigate();
   const [otp, setOtp] = useState("");
 
-  const [otpMatch] = useForgetOtpVerifyMutation();
+  const [otpMatch] = useSignUpOtpVerifyMutation();
   const [resendOtp] = useResendForgetOTPMutation();
 
   const handleOTPSubmit = async () => {

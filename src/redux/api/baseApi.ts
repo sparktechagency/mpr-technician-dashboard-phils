@@ -9,6 +9,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers) => {
     const token = Cookies.get("mrt_tech_accessToken");
     const signUpToken = Cookies.get("mrt_tech_signUpToken");
+    const forgetToken = Cookies.get("mpr_forgetToken");
 
     const changePassToken = Cookies.get("mpr_forgetOtpMatchToken");
 
@@ -18,6 +19,10 @@ const baseQuery = fetchBaseQuery({
 
     if (signUpToken) {
       headers.set("token", `${signUpToken}`);
+    }
+
+    if (forgetToken) {
+      headers.set("token", `${forgetToken}`);
     }
 
     if (changePassToken) {

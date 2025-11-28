@@ -62,6 +62,7 @@ const SignIn = () => {
       });
       form.resetFields();
       router("/", { replace: true });
+      Cookies.remove("mrt_tech_signUpToken");
     } else if (
       res?.statusCode === 200 &&
       res?.data?.user?.role !== "technician"

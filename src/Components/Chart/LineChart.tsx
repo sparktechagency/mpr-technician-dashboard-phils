@@ -34,7 +34,7 @@ const monthNames = [
 
 const Line_Chart = ({ earningsData }: { earningsData: IMonthlyStats[] }) => {
   // Convert API → Chart Format
-  const chartData = earningsData.map((item) => ({
+  const chartData = earningsData?.map((item) => ({
     name: monthNames[item.month - 1], // convert month number
     completed: item.completed,
     inprogress: item.inprogress,

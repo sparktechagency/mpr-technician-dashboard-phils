@@ -1,4 +1,3 @@
-import Area_Chart from "../../Chart/AreaChart";
 import YearOption from "../../../utils/YearOption";
 import { useState } from "react";
 import { ConfigProvider, Select } from "antd";
@@ -51,9 +50,9 @@ const UserOverview = () => {
           </div>
         </div>
       </div>
-      <div>
+      {/* <div>
         <Area_Chart />
-      </div>
+      </div> */}
     </div>
   );
 };

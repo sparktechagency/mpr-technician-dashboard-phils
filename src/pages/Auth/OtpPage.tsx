@@ -80,7 +80,7 @@ const OTPVerify = () => {
                       rounded-lg mr-[10px] sm:mr-[20px] !text-base-color "
                     value={otp}
                     onChange={setOtp}
-                    numInputs={6}
+                    numInputs={4}
                     renderInput={(props) => <input {...props} required />}
                   />
                 </div>
