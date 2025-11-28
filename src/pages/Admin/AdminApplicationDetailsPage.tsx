@@ -76,7 +76,7 @@ const AdminApplicationDetailsPage = () => {
 
   if (
     serviceData?.status === "inprogress" &&
-    serviceData?.serviceProviderId !== user?.userId
+    serviceData?.serviceProviderId?._id !== user?.userId
   ) {
     return <div>Service not found</div>;
   }

@@ -24,7 +24,12 @@ export interface IServiceRequest {
   preferedTime: string; // e.g., "10:00 AM"
   isAllAgreement: boolean;
   status: string; // e.g., "pending", "completed", etc.
-  serviceProviderId: string | null;
+  serviceProviderId: {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
   statusHistory: IStatusHistory[];
   isDeleted: boolean;
   location: ILocation;
