@@ -4,9 +4,10 @@ import ReuseButton from "../../ui/Button/ReuseButton";
 import {
   useAcceptOrderMutation,
   useCompleteOrderMutation,
+  useEnRouteMailMutation,
   useGetSingleOrderQuery,
 } from "../../redux/features/order/orderApi";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { IServiceRequest } from "../../types";
 import { formatDate } from "../../utils/dateFormet";
 import MapComponent from "../../ui/MapComponent";
@@ -16,7 +17,9 @@ import tryCatchWrapper from "../../utils/tryCatchWrapper";
 import useUserData from "../../hooks/useUserData";
 
 const AdminApplicationDetailsPage = () => {
+  const router = useNavigate();
   const [completeOrder] = useCompleteOrderMutation();
+  const [enRoute] = useEnRouteMailMutation();
 
   const { id } = useParams<{ id: string }>();
   const user = useUserData();
@@ -48,8 +51,19 @@ const AdminApplicationDetailsPage = () => {
       "Accepting Request..."
     );
     if (res?.statusCode === 200) {
+      router("/technician/application", { replace: true });
       handleCancel();
       refetch();
+    }
+  };
+  const handleEnRoute = async (data: IServiceRequest) => {
+    const res = await tryCatchWrapper(
+      enRoute,
+      { params: data?._id },
+      "Sending En Route Mail...",
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
     }
   };
 
@@ -74,11 +88,11 @@ const AdminApplicationDetailsPage = () => {
     );
   }
 
+
   if (
-    serviceData?.status === "inprogress" &&
-    serviceData?.serviceProviderId?._id !== user?.userId
+    serviceData?.status !== "pending" && serviceData?.serviceProviderId !== user?.userId
   ) {
-    return <div>Service not found</div>;
+    router("/technician/application", { replace: true });
   }
 
   return (
@@ -89,21 +103,20 @@ const AdminApplicationDetailsPage = () => {
             Details
           </h1>
           <p
-            className={`text-sm sm:text-base lg:text-lg 0 text-base-color px-2 py-0.5 rounded-full font-bold ${
-              serviceData?.status === "pending"
-                ? "bg-warning-color/50 text-base-color"
-                : serviceData?.status === "completed"
+            className={`text-sm sm:text-base lg:text-lg 0 text-base-color px-2 py-0.5 rounded-full font-bold ${serviceData?.status === "pending"
+              ? "bg-warning-color/50 text-base-color"
+              : serviceData?.status === "completed"
                 ? "bg-success-color text-primary-color"
                 : "bg-[#6226EF]/50 text-base-color"
-            }`}
+              }`}
           >
             {serviceData?.status === "pending"
               ? "Pending"
               : serviceData?.status === "completed"
-              ? "Completed"
-              : serviceData?.status === "inprogress"
-              ? "In Progress"
-              : ""}
+                ? "Completed"
+                : serviceData?.status === "inprogress"
+                  ? "In Progress"
+                  : ""}
           </p>
         </div>
       </div>
@@ -222,7 +235,7 @@ const AdminApplicationDetailsPage = () => {
       )}
       {serviceData?.status === "inprogress" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 px-4 text-lg mt-16">
-          <div className=" p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent text-secondary-color border border-secondary-color">
+          <div onClick={() => handleEnRoute(serviceData)} className="cursor-pointer p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent text-secondary-color border border-secondary-color">
             En route
           </div>
           <Link

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 // Define types for the props
 interface YearOptionProps {
   currentYear: number;
+  year: number;
   setThisYear: (year: any) => void; // Function to set the selected year
 }
 
@@ -15,12 +16,13 @@ interface YearOption {
 
 const YearOption: React.FC<YearOptionProps> = ({
   currentYear,
+  year,
   setThisYear,
 }) => {
   const [yearOptions, setYearOptions] = useState<YearOption[]>([]); // Type state as an array of YearOption objects
 
   useEffect(() => {
-    const startYear = 2020;
+    const startYear = 2024;
     const yearRange: YearOption[] = [];
 
     // Add the years to the list
@@ -51,7 +53,7 @@ const YearOption: React.FC<YearOptionProps> = ({
       }}
     >
       <Select
-        defaultValue={currentYear >= 2025 ? "2025" : currentYear.toString()}
+        value={year}
         style={{ width: 100 }}
         options={yearOptions}
         className="custom-select"

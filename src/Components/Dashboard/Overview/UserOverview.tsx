@@ -46,7 +46,7 @@ const UserOverview = () => {
             </Select>
           </ConfigProvider>
           <div>
-            <YearOption currentYear={currentYear} setThisYear={setYear} />
+            <YearOption currentYear={currentYear} year={year} setThisYear={setYear} />
           </div>
         </div>
       </div>

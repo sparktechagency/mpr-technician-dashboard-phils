@@ -37,6 +37,12 @@ const overviewApi = baseApi.injectEndpoints({
         method: "PATCH",
       }),
     }),
+    enRouteMail: builder.mutation({
+      query: (req) => ({
+        url: `/serviceOrder/en-route/${req?.params}`,
+        method: "PATCH",
+      }),
+    }),
   }),
 });
 
@@ -46,4 +52,5 @@ export const {
   useGetSingleOrderQuery,
   useAcceptOrderMutation,
   useCompleteOrderMutation,
+  useEnRouteMailMutation,
 } = overviewApi;

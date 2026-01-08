@@ -4,6 +4,8 @@ import ReuseButton from "../Button/ReuseButton";
 import { Link, useNavigate } from "react-router-dom";
 import { IServiceRequest } from "../../types";
 import { formatDate } from "../../utils/dateFormet";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import { useEnRouteMailMutation } from "../../redux/features/order/orderApi";
 
 const ApplicationCard = ({
   data,
@@ -17,6 +19,16 @@ const ApplicationCard = ({
   showCompleteModal?: (data: IServiceRequest) => void;
 }) => {
   const router = useNavigate();
+  const [enRoute] = useEnRouteMailMutation();
+
+  const handleEnRoute = async (data: IServiceRequest) => {
+    await tryCatchWrapper(
+      enRoute,
+      { params: data?._id },
+      "Sending En Route Mail...",
+    );
+
+  };
   return (
     <div className="py-4 rounded-lg border border-base-color !text-base-color">
       <div className="px-4 flex justify-between items-center gap-5">
@@ -26,19 +38,18 @@ const ApplicationCard = ({
               {data?.clientName}
             </h1>
             <p
-              className={`text-xs lg:text-sm px-2 py-0.5 rounded-full ${
-                activeTab === "pending"
-                  ? "bg-warning-color/50 text-base-color"
-                  : activeTab === "completed"
+              className={`text-xs lg:text-sm px-2 py-0.5 rounded-full ${activeTab === "pending"
+                ? "bg-warning-color/50 text-base-color"
+                : activeTab === "completed"
                   ? "bg-success-color text-primary-color"
                   : "bg-[#6226EF]/50 text-base-color"
-              }`}
+                }`}
             >
               {activeTab === "pending"
                 ? "Pending"
                 : activeTab === "completed"
-                ? "Completed"
-                : "In Progress"}
+                  ? "Completed"
+                  : "In Progress"}
             </p>
           </div>
           {activeTab === "inprogress" ? (
@@ -82,11 +93,10 @@ const ApplicationCard = ({
       <div className="w-full h-[1px] bg-base-color my-2"></div>
 
       <div
-        className={`grid ${
-          activeTab === "inprogress"
-            ? `grid-cols-1 lg:grid-cols-2`
-            : "grid-cols-1"
-        }`}
+        className={`grid ${activeTab === "inprogress"
+          ? `grid-cols-1 lg:grid-cols-2`
+          : "grid-cols-1"
+          }`}
       >
         <div className="px-4">
           <div className="flex items-center justify-between py-1  gap-2 mb-2 font-semibold text-sm sm:text-base">
@@ -108,7 +118,7 @@ const ApplicationCard = ({
         </div>
         {activeTab === "inprogress" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 px-4 text-lg">
-            <div className=" p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent text-secondary-color border border-secondary-color">
+            <div onClick={() => handleEnRoute(data)} className="cursor-pointer p-2 font-semibold rounded-lg shadow flex items-center justify-center gap-2 bg-transparent text-secondary-color border border-secondary-color">
               En route
             </div>
             <Link

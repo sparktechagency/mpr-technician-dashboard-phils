@@ -20,7 +20,6 @@ const IncomeOverview = () => {
     );
   }
 
-  console.log(year);
   return (
     <div className="w-full p-6 bg-transparent rounded-lg flex flex-col  my-10 mb-16 border border-[#B0B0B0]">
       <div className="flex justify-between items-center text-base-color">
@@ -44,7 +43,7 @@ const IncomeOverview = () => {
 
         <div className="flex items-center gap-2">
           <div>
-            <YearOption currentYear={currentYear} setThisYear={setYear} />
+            <YearOption currentYear={currentYear} year={year} setThisYear={setYear} />
           </div>
         </div>
       </div>
