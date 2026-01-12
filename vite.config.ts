@@ -5,4 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  preview: {
+    port: 3002, // make sure this matches your dashboard port
+    allowedHosts: ["api.mobilephonerepair.org"],
+  },
 });
