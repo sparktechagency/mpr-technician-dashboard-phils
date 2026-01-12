@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   preview: {
     port: 3002, // make sure this matches your dashboard port
-    allowedHosts: ["api.mobilephonerepair.org"],
+    allowedHosts: ["technician.mobilephonerepair.org"],
   },
 });
