@@ -60,7 +60,7 @@ const DashboardLayout = () => {
   const menuItems =
     userRole?.role === "technician"
       ? //   ? sidebarItemsGenerator(adminPaths, "admin")
-        sidebarItemsGenerator(adminPaths, userRole?.role)
+      sidebarItemsGenerator(adminPaths, userRole?.role)
       : [];
 
   const otherItem = sidebarItemsGenerator(
@@ -118,9 +118,8 @@ const DashboardLayout = () => {
             background: "rgba(255, 255, 255, 0)", // semi-transparent background
             backdropFilter: "blur(50px)", // apply the blur effect
           }}
-          className={` border-r !border-[#D5D5D5] !fixed !z-[9998] !transition-all !duration-500 !ease-in-out ${
-            collapsed ? "!left-[-300px]" : "!left-0"
-          }`}
+          className={` border-r !border-[#D5D5D5] !fixed !z-[9998] !transition-all !duration-500 !ease-in-out ${collapsed ? "!left-[-300px]" : "!left-0"
+            }`}
         >
           <div className="flex items-center justify-end my-5 px-4">
             <BarsOutlined
@@ -128,7 +127,7 @@ const DashboardLayout = () => {
               className="text-3xl !text-base-color"
             />
           </div>
-          <Link to="/">
+          <Link to="https://mobilephonerepair.org" target="_blank">
             <img
               src={AllImages.logo}
               alt="logo"

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Form } from "antd";
+import { Form, FormInstance } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import Container from "../../ui/Container";
 import ReusableForm from "../../ui/Form/ReuseForm";
@@ -12,6 +12,7 @@ import useUserData from "../../hooks/useUserData";
 import { useEffect } from "react";
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
 import Cookies from "js-cookie";
+import { RiLockPasswordFill } from "react-icons/ri";
 
 const inputStructure = [
   {
@@ -72,6 +73,30 @@ const inputStructure = [
     inputClassName: "!py-2",
     rules: [{ required: true, message: "Password is required" }],
   },
+  {
+    name: "confirmPassword",
+    type: "password",
+    inputType: "password",
+    label: "Confirm Password",
+    placeholder: "Confirm your password",
+    prefix: <RiLockPasswordFill className="mr-1" />,
+    labelClassName: "!font-semibold",
+    rules: [
+      { required: true, message: "Confirm Password is required" },
+      ({
+        getFieldValue,
+      }: {
+        getFieldValue: FormInstance["getFieldValue"];
+      }) => ({
+        validator(_: unknown, value: string) {
+          if (!value || getFieldValue("password") === value) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error("Password does not match!"));
+        },
+      }),
+    ],
+  },
 ];
 
 const SignUp = () => {
@@ -91,7 +116,7 @@ const SignUp = () => {
   const onFinish = async (values: any) => {
     const res = await tryCatchWrapper(
       signup,
-      { body: { ...values, role: "technician" } },
+      { body: { name: values.name, email: values.email, phone: values.phone, yearOfExperience: values.yearOfExperience, specialties: values.specialties, password: values.password, role: "technician" } },
       "Signing Up..."
     );
 
