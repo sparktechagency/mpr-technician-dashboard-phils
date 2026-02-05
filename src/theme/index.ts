@@ -39,9 +39,9 @@ export const mainTheme = {
       colorIcon: "#C70039",
     },
     DatePicker: {
+      colorTextPlaceholder: "#20202099",
       colorTextQuaternary: "#2c2c2c",
       fontSize: 18,
-      colorTextPlaceholder: "#2c2c2c88",
       colorBgElevated: "#ffffff",
       colorText: "#2c2c2c",
       colorTextHeading: "#2c2c2cBB",
@@ -52,7 +52,7 @@ export const mainTheme = {
     },
     timePicker: {
       fontSize: 20,
-      colorTextPlaceholder: "#D0D5DD",
+      colorTextPlaceholder: "#20202099",
       colorBgElevated: "#202020",
       colorText: "#2c2c2c",
       colorTextHeading: "#2c2c2cBB",

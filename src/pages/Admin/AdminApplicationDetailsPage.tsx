@@ -44,10 +44,11 @@ const AdminApplicationDetailsPage = () => {
     setIsAcceptModalVisible(false);
     setCurrentRecord(null);
   };
-  const handleApprove = async (data: IServiceRequest) => {
+  const handleApprove = async (data: IServiceRequest, value?: any) => {
+    console.log(value)
     const res = await tryCatchWrapper(
       acceptOrder,
-      { params: data?._id },
+      { params: data?._id, body: value },
       "Accepting Request..."
     );
     if (res?.statusCode === 200) {
@@ -268,12 +269,13 @@ const AdminApplicationDetailsPage = () => {
             ? "Are You Sure You want to Complete This Order?"
             : "Are You Sure You want to Accept This Request?"
         }
+        showTimeDateModifier={(serviceData?.status === "pending" && true) || false}
         currentRecord={currentRecord}
-        handleApprove={() => {
+        handleApprove={(data, value) => {  // ✅ Accept the parameters
           if (serviceData?.status === "inprogress") {
-            handleComplete(serviceData);
+            handleComplete(data);
           } else {
-            handleApprove(serviceData);
+            handleApprove(data, value);  // ✅ Now 'value' is defined
           }
         }}
       />
