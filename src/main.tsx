@@ -3,6 +3,9 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
+import { disableConsole } from "./utils/disableConsole.ts";
+
+disableConsole();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

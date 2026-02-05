@@ -62,7 +62,7 @@ const ReuseDatePicker = ({
           }}
           disabled={disabled}
           className={cn(
-            "!py-1.5 !px-3 !text-lg !bg-input-color border !border-primary-color !text-base-color rounded-lg w-full",
+            "!py-1.5 !px-3 !text-lg !bg-input-color border !border-primary-color !text-black rounded-lg w-full",
             className
           )}
           style={style}

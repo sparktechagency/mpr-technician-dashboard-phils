@@ -4,7 +4,7 @@ import React from "react";
 import { TimePicker } from "antd";
 import { Typography, Form } from "antd";
 import { Rule } from "antd/es/form";
-import dayjs from "dayjs"; // Import dayjs for date comparison
+import dayjs from "dayjs";
 import { cn } from "../../lib/utils";
 
 interface ReuseTimePickerProps {
@@ -103,7 +103,7 @@ const ReuseTimePicker = ({
           }}
           disabled={disabled}
           className={cn(
-            "!py-1.5 !px-3 !text-lg !bg-input-color border !border-primary-color !text-base-color rounded-lg w-full",
+            "!py-1.5 !px-3 !text-lg !bg-input-color border !border-primary-color !text-black rounded-lg w-full",
             className
           )}
           style={style}

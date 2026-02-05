@@ -62,7 +62,7 @@ const ApplicationCard = ({
 
           {activeTab === "inprogress" && (
             <p className="text-xs sm:text-sm lg:text-base  mt-3">
-              {formatDate(data?.preferedDate)}at {data?.preferedTime}
+              {formatDate(data?.preferedDate)} at {data?.preferedTime}
             </p>
           )}
         </div>{" "}

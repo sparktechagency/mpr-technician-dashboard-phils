@@ -26,10 +26,14 @@ const overviewApi = baseApi.injectEndpoints({
       }),
     }),
     acceptOrder: builder.mutation({
-      query: (req) => ({
-        url: `/serviceOrder/accept/${req?.params}`,
-        method: "PATCH",
-      }),
+      query: (req) => {
+        console.log(req);
+        return {
+          url: `/serviceOrder/accept/${req?.params}`,
+          method: "PATCH",
+          body: req.body,
+        };
+      },
     }),
     completeOrder: builder.mutation({
       query: (req) => ({
